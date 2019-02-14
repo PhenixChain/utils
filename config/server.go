@@ -18,9 +18,9 @@ type SrvConfig struct {
 	LogTrack   bool
 }
 
-var SrvCfg SrvConfig
-
-func SrvCfgInit() {
+// SrvInit 服务配置初始化
+func SrvInit() *SrvConfig {
+	srv := &SrvConfig{}
 	cfg, err := ini.Load("./config.ini")
 	if err != nil {
 		log.Fatalln(err)
@@ -52,10 +52,9 @@ func SrvCfgInit() {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		SrvCfg.TlsConf = &tls.Config{
+		srv.TlsConf = &tls.Config{
 			MinVersion:   tls.VersionTLS12,
 			Certificates: []tls.Certificate{cer},
-			//NextProtos:   []string{"h2"},
 		}
 	}
 
@@ -65,7 +64,9 @@ func SrvCfgInit() {
 		consulCfg.Token = cfgSec.Key("consul_acl_token").String()
 	}
 
-	SrvCfg.ConsulConf = consulCfg
-	SrvCfg.ServerName = cfgSec.Key("srv_name").String()
-	SrvCfg.LogTrack, _ = cfgSec.Key("log_track_enable").Bool()
+	srv.ConsulConf = consulCfg
+	srv.ServerName = cfgSec.Key("srv_name").String()
+	srv.LogTrack, _ = cfgSec.Key("log_track_enable").Bool()
+
+	return srv
 }

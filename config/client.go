@@ -17,11 +17,10 @@ type CliConfig struct {
 	TlsConf    *tls.Config
 }
 
-var CliCfg CliConfig
-
-// CliCfgInit 服务配置初始化
+// CliInit 服务配置初始化
 // section 服务实例节点名称
-func CliCfgInit(section string) {
+func CliInit(section string) *CliConfig {
+	cli := &CliConfig{}
 	cfg, err := ini.Load("./config.ini")
 	if err != nil {
 		log.Fatalln(err)
@@ -42,7 +41,7 @@ func CliCfgInit(section string) {
 			log.Fatalln("credentials: failed to append certificates")
 		}
 
-		CliCfg.TlsConf = &tls.Config{
+		cli.TlsConf = &tls.Config{
 			ServerName: cfgSec.Key("srv_name").String(),
 			RootCAs:    cp,
 		}
@@ -54,6 +53,8 @@ func CliCfgInit(section string) {
 		consulCfg.Token = cfgSec.Key("consul_acl_token").String()
 	}
 
-	CliCfg.ConsulConf = consulCfg
-	CliCfg.ServerName = cfgSec.Key("srv_name").String()
+	cli.ConsulConf = consulCfg
+	cli.ServerName = cfgSec.Key("srv_name").String()
+
+	return cli
 }
