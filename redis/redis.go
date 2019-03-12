@@ -173,18 +173,25 @@ func (rc *ConnPool) Hgetall(key string) (map[string]string, error) {
 
 /*############################## List ##############################*/
 
-// Rpush for List
-func (rc *ConnPool) Rpush(key string, value []string) (interface{}, error) {
+// Lpush for List
+func (rc *ConnPool) Lpush(key string, value []string) (interface{}, error) {
 	conn := rc.redisPool.Get()
 	defer conn.Close()
-	return conn.Do("RPUSH", redis.Args{}.Add(key).AddFlat(value)...)
+	return conn.Do("LPUSH", redis.Args{}.Add(key).AddFlat(value)...)
 }
 
-// Lpop for List
-func (rc *ConnPool) Lpop(key string) (string, error) {
+// Rpop for List
+func (rc *ConnPool) Rpop(key string) (string, error) {
 	conn := rc.redisPool.Get()
 	defer conn.Close()
-	return redis.String(conn.Do("LPOP", key))
+	return redis.String(conn.Do("RPOP", key))
+}
+
+// Brpop for List
+func (rc *ConnPool) Brpop(key string, timeoutSeconds int) ([]interface{}, error) {
+	conn := rc.redisPool.Get()
+	defer conn.Close()
+	return redis.Values(conn.Do("BRPOP", key, timeoutSeconds))
 }
 
 // Llen for List
