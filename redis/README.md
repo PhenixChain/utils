@@ -49,7 +49,7 @@ if err != nil {
 	log.Fatalln(err)
 }
 for _, item := range hVal {
-	fmt.Println(string(item.([]byte)))
+	fmt.Println(item)
 }
 ```    
 

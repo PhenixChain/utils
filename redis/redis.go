@@ -137,10 +137,10 @@ func (rc *ConnPool) Hmset(key string, fieldValue map[string]string) (interface{}
 }
 
 // Hmget for Hash
-func (rc *ConnPool) Hmget(key string, field []string) ([]interface{}, error) {
+func (rc *ConnPool) Hmget(key string, field []string) ([]string, error) {
 	conn := rc.redisPool.Get()
 	defer conn.Close()
-	return redis.Values(conn.Do("HMGET", redis.Args{}.Add(key).AddFlat(field)...))
+	return redis.Strings(conn.Do("HMGET", redis.Args{}.Add(key).AddFlat(field)...))
 }
 
 // Hlen for Hash
@@ -188,10 +188,10 @@ func (rc *ConnPool) Rpop(key string) (string, error) {
 }
 
 // Brpop for List
-func (rc *ConnPool) Brpop(key string, timeoutSeconds int) ([]interface{}, error) {
+func (rc *ConnPool) Brpop(key string, timeoutSeconds int) ([]string, error) {
 	conn := rc.redisPool.Get()
 	defer conn.Close()
-	return redis.Values(conn.Do("BRPOP", key, timeoutSeconds))
+	return redis.Strings(conn.Do("BRPOP", key, timeoutSeconds))
 }
 
 // Llen for List
@@ -211,10 +211,10 @@ func (rc *ConnPool) Sadd(key string, member []string) (interface{}, error) {
 }
 
 // Smembers for Set
-func (rc *ConnPool) Smembers(key string) ([]interface{}, error) {
+func (rc *ConnPool) Smembers(key string) ([]string, error) {
 	conn := rc.redisPool.Get()
 	defer conn.Close()
-	return redis.Values(conn.Do("SMEMBERS", key))
+	return redis.Strings(conn.Do("SMEMBERS", key))
 }
 
 // Srem for Set
@@ -241,17 +241,17 @@ func (rc *ConnPool) Zadd(key string, score int64, member string) (interface{}, e
 }
 
 // Zrange for SortedSet
-func (rc *ConnPool) Zrange(key string, start, stop int) ([]interface{}, error) {
+func (rc *ConnPool) Zrange(key string, start, stop int) ([]string, error) {
 	conn := rc.redisPool.Get()
 	defer conn.Close()
-	return redis.Values(conn.Do("ZRANGE", key, start, stop))
+	return redis.Strings(conn.Do("ZRANGE", key, start, stop))
 }
 
 // Zrevrange for SortedSet
-func (rc *ConnPool) Zrevrange(key string, start, stop int) ([]interface{}, error) {
+func (rc *ConnPool) Zrevrange(key string, start, stop int) ([]string, error) {
 	conn := rc.redisPool.Get()
 	defer conn.Close()
-	return redis.Values(conn.Do("ZREVRANGE", key, start, stop))
+	return redis.Strings(conn.Do("ZREVRANGE", key, start, stop))
 }
 
 // Zcard for SortedSet
