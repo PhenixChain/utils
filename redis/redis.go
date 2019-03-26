@@ -274,3 +274,10 @@ func (rc *ConnPool) Zremrangebyrank(key string, start, stop int) (interface{}, e
 	defer conn.Close()
 	return conn.Do("ZREMRANGEBYRANK", key, start, stop)
 }
+
+// Zremrangebyscore for SortedSet
+func (rc *ConnPool) Zremrangebyscore(key string, min, max int64) (interface{}, error) {
+	conn := rc.redisPool.Get()
+	defer conn.Close()
+	return conn.Do("ZREMRANGEBYSCORE", key, min, max)
+}
