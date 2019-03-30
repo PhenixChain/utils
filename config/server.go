@@ -21,7 +21,7 @@ type SrvConfig struct {
 // SrvInit 服务配置初始化
 func SrvInit() *SrvConfig {
 	srv := &SrvConfig{}
-	cfg, err := ini.Load("./config.ini")
+	cfg, err := ini.Load("./conf/config.ini")
 	if err != nil {
 		log.Fatalln(err)
 	}

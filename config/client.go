@@ -21,7 +21,7 @@ type CliConfig struct {
 // section 服务实例节点名称
 func CliInit(section string) *CliConfig {
 	cli := &CliConfig{}
-	cfg, err := ini.Load("./config.ini")
+	cfg, err := ini.Load("./conf/config.ini")
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -15,7 +15,7 @@ type ConnPool struct {
 
 // InitRedisPool 初始化
 func InitRedisPool() *ConnPool {
-	cfg, err := ini.Load("./config.ini")
+	cfg, err := ini.Load("./conf/config.ini")
 	if err != nil {
 		log.Fatalln(err)
 	}

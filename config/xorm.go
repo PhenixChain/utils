@@ -8,7 +8,7 @@ import (
 )
 
 func DbInit() (*xorm.Engine, error) {
-	dbcfg, err := ini.Load("./config.ini")
+	dbcfg, err := ini.Load("./conf/config.ini")
 	if err != nil {
 		log.Fatalln(err)
 	}
