@@ -89,11 +89,11 @@ func (rc *ConnPool) Get(key string) (string, error) {
 func (rc *ConnPool) GetErrNil(key string) (string, error) {
 	conn := rc.redisPool.Get()
 	defer conn.Close()
-	rep, err := conn.Do("GET", key)
+	rep, err := redis.String(conn.Do("GET", key))
 	if err == redis.ErrNil {
 		return "", nil
 	}
-	return redis.String(rep, err)
+	return rep, err
 }
 
 // Set for string
