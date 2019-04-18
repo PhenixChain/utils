@@ -85,6 +85,17 @@ func (rc *ConnPool) Get(key string) (string, error) {
 	return redis.String(conn.Do("GET", key))
 }
 
+// GetErrNil for string
+func (rc *ConnPool) GetErrNil(key string) (string, error) {
+	conn := rc.redisPool.Get()
+	defer conn.Close()
+	rep, err := conn.Do("GET", key)
+	if err == redis.ErrNil {
+		return "", nil
+	}
+	return redis.String(rep, err)
+}
+
 // Set for string
 func (rc *ConnPool) Set(key string, value string) (interface{}, error) {
 	conn := rc.redisPool.Get()
