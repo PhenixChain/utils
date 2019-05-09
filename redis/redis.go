@@ -292,3 +292,13 @@ func (rc *ConnPool) Zremrangebyscore(key string, min, max int64) (interface{}, e
 	defer conn.Close()
 	return conn.Do("ZREMRANGEBYSCORE", key, min, max)
 }
+
+/*############################## Lua Script ##############################*/
+
+// LuaScriptZset for SortedSet
+func (rc *ConnPool) LuaScriptZset(script, key string, score int64, member string) (interface{}, error) {
+	conn := rc.redisPool.Get()
+	defer conn.Close()
+	lua := redis.NewScript(1, script)
+	return lua.Do(conn, key, score, member)
+}
