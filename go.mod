@@ -4,7 +4,7 @@ require (
 	cloud.google.com/go v0.39.0 // indirect
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
 	github.com/go-ini/ini v1.42.0
-	github.com/go-xorm/xorm v0.7.1
+	github.com/go-xorm/xorm v0.7.4
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/hashicorp/consul/api v1.1.0
