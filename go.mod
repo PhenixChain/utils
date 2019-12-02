@@ -20,3 +20,5 @@ require (
 	google.golang.org/appengine v1.6.0 // indirect
 	gopkg.in/ini.v1 v1.42.0 // indirect
 )
+
+go 1.13
