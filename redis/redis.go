@@ -265,6 +265,22 @@ func (rc *ConnPool) Zrevrange(key string, start, stop int) ([]string, error) {
 	return redis.Strings(conn.Do("ZREVRANGE", key, start, stop))
 }
 
+// Zrangebyscore for SortedSet
+// all:     -inf ~ +inf    min ~ max
+// min-max: (min ~ (max
+func (rc *ConnPool) Zrangebyscore(key string, min, max string, offset, limit int) ([]string, error) {
+	conn := rc.redisPool.Get()
+	defer conn.Close()
+	return redis.Strings(conn.Do("ZRANGEBYSCORE", key, min, max, "LIMIT", offset, limit))
+}
+
+// Zrevrangebyscore for SortedSet
+func (rc *ConnPool) Zrevrangebyscore(key string, max, min string, offset, limit int) ([]string, error) {
+	conn := rc.redisPool.Get()
+	defer conn.Close()
+	return redis.Strings(conn.Do("ZREVRANGEBYSCORE", key, max, min, "LIMIT", offset, limit))
+}
+
 // Zcard for SortedSet
 func (rc *ConnPool) Zcard(key string) (int, error) {
 	conn := rc.redisPool.Get()
