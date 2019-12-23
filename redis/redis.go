@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"log"
+	"strings"
 	"time"
 
 	"github.com/go-ini/ini"
@@ -17,7 +17,7 @@ type ConnPool struct {
 func InitRedisPool() *ConnPool {
 	cfg, err := ini.Load("./conf/config.ini")
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
 	cfgSec := cfg.Section("redis")
 
@@ -26,8 +26,23 @@ func InitRedisPool() *ConnPool {
 	dbIndex, _ := cfgSec.Key("db_index").Int()         //数据库序号
 	maxIdle, _ := cfgSec.Key("max_idle").Int()         //最大空闲连接数
 	maxActive, _ := cfgSec.Key("max_active").Int()     //最大连接数
-	idleTimeout, _ := cfgSec.Key("idle_timeout").Int() //空闲连接超时时间(秒)
-	connTimeout, _ := cfgSec.Key("conn_timeout").Int() //连接超时时间(秒)
+	idleTimeout, _ := cfgSec.Key("idle_timeout").Int() //空闲连接超时(秒)
+	connTimeout, _ := cfgSec.Key("conn_timeout").Int() //连接、读写超时(秒)
+
+	redisAddrs := strings.Split(host, "|")
+
+	sntnl := &Sentinel{
+		Addrs:      redisAddrs,
+		MasterName: "master1",
+		Dial: func(addr string) (redis.Conn, error) {
+			timeout := time.Duration(connTimeout) * time.Second
+			c, err := redis.DialTimeout("tcp", addr, timeout, timeout, timeout)
+			if err != nil {
+				return nil, err
+			}
+			return c, nil
+		},
+	}
 
 	rcp := &ConnPool{}
 	rcp.redisPool = &redis.Pool{
@@ -36,6 +51,15 @@ func InitRedisPool() *ConnPool {
 		IdleTimeout: time.Duration(idleTimeout) * time.Second,
 		Wait:        true,
 		Dial: func() (redis.Conn, error) {
+			// 不少于三个地址才启用sentinel
+			if len(redisAddrs) >= 3 {
+				masterAddr, err := sntnl.MasterAddr()
+				if err != nil {
+					return nil, err
+				}
+				host = masterAddr
+			}
+
 			c, err := redis.Dial("tcp", host,
 				redis.DialPassword(pwd),
 				redis.DialDatabase(dbIndex),
